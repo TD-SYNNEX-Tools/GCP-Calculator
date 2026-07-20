@@ -1,0 +1,22 @@
+Options -Indexes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Rotear tudo (exceto arquivos existentes) para index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Bloqueia acesso direto a arquivos sensíveis (defesa em profundidade).
+# O document root é /public, mas isto protege caso o mapeamento mude.
+<FilesMatch "(^\.|\.(env|ini|log|sql|md|lock|json|dist|bak)$)">
+    Require all denied
+</FilesMatch>

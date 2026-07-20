@@ -1,0 +1,43 @@
+server {
+    listen 8080;
+    listen [::]:8080;
+
+    # Document root aponta para /public (front controller da aplicacao).
+    root /home/site/wwwroot/public;
+    index index.php index.html index.htm hostingstart.html;
+
+    # Roteia tudo (exceto arquivos existentes) para index.php.
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    # Bloqueia acesso direto a arquivos sensiveis (defesa em profundidade).
+    location ~* \.(env|ini|log|sql|md|lock|bak|dist)$ {
+        deny all;
+    }
+    location ~ /\.(?!well-known) {
+        deny all;
+    }
+
+    # Cabecalhos de seguranca (equivalente ao .htaccess do Apache).
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    location ~ [^/]\.php(/|$) {
+        fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
+        fastcgi_pass 127.0.0.1:9000;
+        include fastcgi_params;
+        fastcgi_param HTTP_PROXY "";
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_intercept_errors on;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 3600;
+        fastcgi_read_timeout 3600;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 4 256k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+    }
+}
