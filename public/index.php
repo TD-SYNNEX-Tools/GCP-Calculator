@@ -134,6 +134,19 @@ $db = static fn(): \PDO => Database::connection($config['db']);
 // ---------- Router ----------
 $router = new Router();
 
+// Health check (App Service > Health check: path /healthz).
+// Não toca no banco nem na sessão: responde 200 assim que o PHP está de pé,
+// mas só depois que o driver do SQL Server estiver carregado — assim o App
+// Service considera a instância saudável apenas quando ela está realmente
+// pronta, e não envia tráfego de usuários durante o cold start.
+$router->get('/healthz', function (): void {
+    $ready = extension_loaded('pdo_sqlsrv') || extension_loaded('pdo_mysql');
+    http_response_code($ready ? 200 : 503);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    echo json_encode(['status' => $ready ? 'ok' : 'warming-up']);
+});
+
 // Home & Auth
 $auth = fn() => new AuthController(
     $db,
