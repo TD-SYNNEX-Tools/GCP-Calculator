@@ -36,4 +36,33 @@ final class User
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
+    /** Lista todos os usuários, administradores primeiro. */
+    public function all(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT id, azure_oid, email, name, role, created_at
+               FROM users
+              ORDER BY CASE role WHEN \'admin\' THEN 0 ELSE 1 END, name ASC'
+        );
+        return $stmt->fetchAll();
+    }
+
+    /** Retorna o perfil ('admin' ou 'user') do usuário. */
+    public function getRole(int $id): string
+    {
+        $stmt = $this->db->prepare('SELECT TOP 1 role FROM users WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchColumn() === 'admin' ? 'admin' : 'user';
+    }
+
+    /** Define o perfil de acesso do usuário (fonte de verdade dos privilégios). */
+    public function setRole(int $id, string $role): void
+    {
+        if (!in_array($role, ['user', 'admin'], true)) {
+            throw new \InvalidArgumentException('Perfil inválido.');
+        }
+        $stmt = $this->db->prepare('UPDATE users SET role = :role WHERE id = :id');
+        $stmt->execute(['role' => $role, 'id' => $id]);
+    }
 }

@@ -21,6 +21,20 @@ CREATE TABLE IF NOT EXISTS users (
 -- Migração para bases existentes:
 -- ALTER TABLE users ADD COLUMN role ENUM('user','admin') NOT NULL DEFAULT 'user';
 
+-- ---------- Auditoria de privilégios (quem promoveu/removeu admin) ----------
+CREATE TABLE IF NOT EXISTS admin_role_audit (
+    id             BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    actor_user_id  BIGINT UNSIGNED NULL,
+    actor_email    VARCHAR(255) NOT NULL,
+    target_user_id BIGINT UNSIGNED NOT NULL,
+    target_email   VARCHAR(255) NOT NULL,
+    action         ENUM('grant','revoke') NOT NULL,
+    ip_address     VARCHAR(64) NULL,
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_role_audit_created (created_at),
+    INDEX idx_role_audit_target (target_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ---------- SKUs / Preços ----------
 CREATE TABLE IF NOT EXISTS skus (
     id                  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

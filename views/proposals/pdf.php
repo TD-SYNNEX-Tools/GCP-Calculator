@@ -96,13 +96,14 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
     .pagecount:before { content: counter(pages); }
 
     /* ---------- Tipografia executiva ---------- */
-    h1 { font-size: 22px; font-weight: 700; color: #1A202C; margin: 0; letter-spacing: -0.3px; }
+    h1 { font-size: 22px; font-weight: 700; color: #102C4E; margin: 0; letter-spacing: -0.3px; }
     h2 {
-        font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-        color: #1A202C;
+        font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #102C4E;
         margin: 28px 0 12px 0;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 6px;
+        border-bottom: 1.5px solid #102C4E;
     }
     h2 .tick { display: none; }
     p { margin: 0; }
@@ -133,19 +134,22 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
     .cover-title {
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 2px;
+        letter-spacing: 3px;
         text-transform: uppercase;
-        color: #FCC92E; /* Amarelo dourado como na capa J.E */
-        margin-bottom: 4px;
+        color: #C79A3A; /* Acento dourado executivo, discreto */
+        margin-bottom: 6px;
     }
     .cover-main-text {
         font-size: 24px;
         font-weight: 800;
-        color: #1A202C;
+        color: #102C4E;
         text-transform: uppercase;
         letter-spacing: 1px;
         line-height: 1;
-        margin: 0 0 4px 0;
+        margin: 0 0 6px 0;
+        padding-top: 8px;
+        border-top: 2px solid #C79A3A;
+        display: inline-block;
     }
     .cover-sub-text {
         font-size: 10px;
@@ -184,15 +188,15 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
 
     /* ---------- Descontos ---------- */
     .discount { width: 100%; border-collapse: collapse; margin-top: 2px; }
-    .discount td { width: 33.33%; padding: 10px 8px; text-align: center; border-bottom: 2px solid #1A73E8; background: #F8FAFC; }
+    .discount td { width: 33.33%; padding: 12px 8px; text-align: center; border-bottom: 2px solid #1D4E89; background: #F5F8FC; }
     .discount td + td { border-left: 1px solid #E2E8F0; }
     .discount td .lbl {
         display: block; font-size: 8.5px; letter-spacing: 1.5px;
-        color: #718096; text-transform: uppercase; margin-bottom: 6px;
+        color: #5B6675; text-transform: uppercase; margin-bottom: 6px;
     }
-    .discount td.total .lbl { color: #718096; }
-    .discount td .val { font-size: 17px; font-weight: 700; color: #1A202C; }
-    .discount td.total .val { font-size: 20px; color: #1A73E8; }
+    .discount td.total .lbl { color: #5B6675; }
+    .discount td .val { font-size: 17px; font-weight: 700; color: #102C4E; }
+    .discount td.total .val { font-size: 20px; color: #1D4E89; }
 
     /* ---------- Tabela de itens ---------- */
     .items { width: 100%; border-collapse: collapse; margin-top: 4px; }
@@ -200,8 +204,8 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
         text-align: left;
         font-size: 9px; font-weight: 700; letter-spacing: 1px;
         color: #FFFFFF; text-transform: uppercase;
-        background: #1A73E8;
-        padding: 10px 12px;
+        background: #102C4E;
+        padding: 11px 12px;
     }
     .items thead th:first-child { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
     .items thead th:last-child  { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
@@ -229,9 +233,10 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
 
     .items tfoot td {
         padding: 12px;
-        background: #000000;
+        background: #102C4E;
         font-size: 11px;
         font-weight: 700; color: #FFFFFF;
+        letter-spacing: 0.5px;
     }
     .items tfoot td.num { text-align: right; font-variant-numeric: tabular-nums; color: #FFFFFF; }
 
@@ -245,13 +250,13 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
     .totals td.v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: #1A202C; }
     .totals { width: 64%; margin: 16px 0 0 36%; }
     .totals .grand td {
-        border-top: 1px solid #1A73E8;
-        border-bottom: 2px solid #1A73E8;
-        background: #F8FAFC;
-        padding: 10px 8px;
-        font-size: 12px; font-weight: 700; color: #1A73E8;
+        border-top: 1px solid #1D4E89;
+        border-bottom: 2px solid #1D4E89;
+        background: #F5F8FC;
+        padding: 11px 8px;
+        font-size: 12px; font-weight: 700; color: #1D4E89;
     }
-    .totals .grand td.k { text-transform: uppercase; letter-spacing: 1px; font-size: 9px; color: #1A73E8; }
+    .totals .grand td.k { text-transform: uppercase; letter-spacing: 1px; font-size: 9px; color: #1D4E89; }
 
     /* ---------- Detalhamento em 3 Cards horizontais estilo J.E ---------- */
     .blocks-container {
@@ -323,7 +328,7 @@ $proposalNo   = str_pad((string)$proposal['id'], 6, '0', STR_PAD_LEFT);
             <?php if ($logoTdSynnex): ?>
                 <img class="td-synnex-logo" src="<?= $logoTdSynnex ?>" alt="TD SYNNEX">
             <?php else: ?>
-                <span class="wordmark" style="color:#1A73E8">TD SYNNEX<small>Brasil</small></span>
+                <span class="wordmark" style="color:#102C4E">TD SYNNEX<small>Brasil</small></span>
             <?php endif; ?>
         </div>
     </div>

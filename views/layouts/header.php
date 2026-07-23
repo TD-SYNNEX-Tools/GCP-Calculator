@@ -11,7 +11,8 @@ $successFlash = Session::flash('success');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
+    <meta name="color-scheme" content="light dark">
+    <script src="/assets/js/theme-init.js"></script>
     <title><?= htmlspecialchars($title) ?> · SecOps Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +28,11 @@ $successFlash = Session::flash('success');
         </a>
 
         <nav class="nav">
+            <?php if (!empty($user['is_admin'])): ?>
+            <a href="/dashboard" class="nav-item <?= $isActive('/dashboard') ?>">
+                <span class="nav-icon" aria-hidden="true">▤</span> Dashboard
+            </a>
+            <?php endif; ?>
             <a href="/proposals/create" class="nav-item <?= $isActive('/proposals/create') ?>">
                 <span class="nav-icon" aria-hidden="true">＋</span> Nova Proposta
             </a>
@@ -41,6 +47,11 @@ $successFlash = Session::flash('success');
             <a href="/admin/skus" class="nav-item <?= $isActive('/admin/skus') ?>">
                 <span class="nav-icon" aria-hidden="true">◧</span> SKUs & Preços
             </a>
+            <?php if (!empty($user['is_admin'])): ?>
+            <a href="/admin/users" class="nav-item <?= $isActive('/admin/users') ?>">
+                <span class="nav-icon" aria-hidden="true">◎</span> Administradores
+            </a>
+            <?php endif; ?>
         </nav>
 
         <div class="user-card">
@@ -49,7 +60,13 @@ $successFlash = Session::flash('success');
                 <strong><?= htmlspecialchars($user['name']) ?></strong>
                 <span><?= htmlspecialchars($user['email']) ?></span>
             </div>
-            <a class="logout" href="/logout" aria-label="Sair">Sair</a>
+            <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+                <span class="theme-toggle-icon" aria-hidden="true"></span>
+            </button>
+            <form method="post" action="/auth/logout" class="logout-form">
+                <input type="hidden" name="_csrf" value="<?= htmlspecialchars(Session::csrfToken()) ?>">
+                <button type="submit" class="logout" aria-label="Sair">Sair</button>
+            </form>
         </div>
     </aside>
     <?php endif; ?>

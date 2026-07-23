@@ -40,15 +40,22 @@ final class ProposalController extends BaseController
             'customer'  => trim((string)$this->input('customer', '')),
             'date_from' => trim((string)$this->input('date_from', '')),
             'date_to'   => trim((string)$this->input('date_to', '')),
+            'q'         => trim((string)$this->input('q', '')),
             'user_id'   => (int)($user['id'] ?? 0),
         ];
+        [$sort, $dir, $page, $perPage] = $this->listOptions();
+        $total = $model->count($filters);
+
         $this->view('proposals/list', [
             'title'     => 'Minhas Propostas',
             'subtitle'  => 'Propostas geradas por você.',
-            'proposals' => $model->search($filters),
+            'proposals' => $model->search($filters, ['sort' => $sort, 'dir' => $dir, 'page' => $page, 'per_page' => $perPage]),
             'filters'   => $filters,
             'isAdmin'   => $this->isAdmin(),
             'scope'     => 'mine',
+            'sort'      => $sort,
+            'dir'       => $dir,
+            'pagination' => $this->pagination($page, $perPage, $total),
         ]);
     }
 
@@ -63,16 +70,47 @@ final class ProposalController extends BaseController
             'customer'  => trim((string)$this->input('customer', '')),
             'date_from' => trim((string)$this->input('date_from', '')),
             'date_to'   => trim((string)$this->input('date_to', '')),
+            'q'         => trim((string)$this->input('q', '')),
         ];
+        [$sort, $dir, $page, $perPage] = $this->listOptions();
+        $total = $model->count($filters);
+
         $this->view('proposals/list', [
             'title'     => 'Todas as Propostas',
             'subtitle'  => 'Histórico completo das propostas geradas pelo time.',
-            'proposals' => $model->search($filters),
+            'proposals' => $model->search($filters, ['sort' => $sort, 'dir' => $dir, 'page' => $page, 'per_page' => $perPage]),
             'stats'     => $model->stats($filters),
             'filters'   => $filters,
             'isAdmin'   => true,
             'scope'     => 'admin',
+            'sort'      => $sort,
+            'dir'       => $dir,
+            'pagination' => $this->pagination($page, $perPage, $total),
         ]);
+    }
+
+    /** Lê e sanitiza os parâmetros de ordenação e paginação da requisição. */
+    private function listOptions(): array
+    {
+        $sort = (string)$this->input('sort', 'created');
+        $dir  = strtolower((string)$this->input('dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $page = max(1, (int)$this->input('page', 1));
+        return [$sort, $dir, $page, 20];
+    }
+
+    /** Monta os metadados de paginação para a view. */
+    private function pagination(int $page, int $perPage, int $total): array
+    {
+        $pages = (int)max(1, (int)ceil($total / $perPage));
+        $page  = min($page, $pages);
+        return [
+            'page'     => $page,
+            'per_page' => $perPage,
+            'total'    => $total,
+            'pages'    => $pages,
+            'from'     => $total > 0 ? ($page - 1) * $perPage + 1 : 0,
+            'to'       => min($page * $perPage, $total),
+        ];
     }
 
     /** Garante que o usuário pode acessar/editar a proposta (dono ou admin). */

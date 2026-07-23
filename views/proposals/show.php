@@ -19,7 +19,7 @@ $fmt = fn(float $v, string $ccy) => $ccy . ' ' . number_format($v, 2, ',', '.');
 </header>
 
 <section class="card">
-    <div class="grid-3 gap">
+    <div class="grid-3 gap kv-grid">
         <div><span class="muted">Revenda</span><strong><?= htmlspecialchars($proposal['reseller_name']) ?></strong></div>
         <div><span class="muted">Cliente Final</span><strong><?= htmlspecialchars($proposal['end_customer_name']) ?></strong></div>
         <div><span class="muted">Contrato</span><strong><?= (int)$proposal['contract_years'] ?> ano(s)</strong></div>

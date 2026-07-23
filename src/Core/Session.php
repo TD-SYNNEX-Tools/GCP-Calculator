@@ -14,11 +14,30 @@ final class Session
         session_set_cookie_params([
             'lifetime' => 0,
             'path'     => '/',
-            'secure'   => (($_SERVER['HTTPS'] ?? 'off') === 'on'),
+            'secure'   => self::isHttps(),
             'httponly' => true,
             'samesite' => 'Lax',
         ]);
         session_start();
+    }
+
+    /**
+     * Detecta se a requisição é HTTPS, considerando o encerramento de TLS
+     * feito por proxies reversos (ex.: Azure App Service), que encaminham a
+     * requisição em HTTP puro para o container e sinalizam o protocolo
+     * original via cabeçalho X-Forwarded-Proto.
+     */
+    public static function isHttps(): bool
+    {
+        if (($_SERVER['HTTPS'] ?? 'off') === 'on') {
+            return true;
+        }
+        $proto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        if ($proto !== '') {
+            // Pode chegar como lista "https,http"; considera o primeiro valor.
+            return strtolower(trim(explode(',', $proto)[0])) === 'https';
+        }
+        return false;
     }
 
     /**

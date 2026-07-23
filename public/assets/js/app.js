@@ -21,6 +21,24 @@ function toast(message, type = 'success', timeout = 3200) {
     setTimeout(() => el.remove(), timeout);
 }
 
+// ---------- Tema claro/escuro ----------
+(function initTheme() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const apply = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    };
+    // Estado inicial coerente com o que o script do <head> já aplicou.
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    apply(current);
+    btn.addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
+        apply(next);
+    });
+})();
+
 // ---------- Toggle switch (label dinâmica) ----------
 document.querySelectorAll('.switch input[type="checkbox"]').forEach((cb) => {
     const label = cb.parentElement.querySelector('.switch-label');

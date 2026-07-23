@@ -5,6 +5,7 @@ use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\ProposalController;
 use App\Controllers\SkuController;
+use App\Controllers\UserController;
 use App\Core\Database;
 use App\Core\Router;
 use App\Core\Session;
@@ -71,7 +72,7 @@ if (!headers_sent()) {
         . "script-src 'self'; connect-src 'self'; "
         . "form-action 'self' https://login.microsoftonline.com"
     );
-    if (($_SERVER['HTTPS'] ?? 'off') === 'on') {
+    if (Session::isHttps()) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     }
 }
@@ -90,11 +91,11 @@ $auth = fn() => new AuthController(
     $config['app']['admin_emails']
 );
 $router->get('/',              fn() => (new DashboardController())->home());
+$router->get('/dashboard',      fn() => (new DashboardController($db))->index());
 $router->get('/login',         fn() => $auth()->showLogin());
 $router->get('/auth/login',    fn() => $auth()->login());
 $router->get('/auth/callback', fn() => $auth()->callback());
 $router->post('/auth/logout',  fn() => $auth()->logout());
-$router->get('/logout',        fn() => $auth()->logout());
 $router->get('/auth/dev-login',  fn() => $auth()->devLogin());
 $router->post('/auth/dev-login', fn() => $auth()->devLogin());
 
@@ -114,5 +115,9 @@ $router->get('/admin/skus',           fn() => (new SkuController($db))->index())
 $router->post('/admin/skus',          fn() => (new SkuController($db))->store());
 $router->put('/admin/skus/{id}',      fn($p) => (new SkuController($db))->update($p));
 $router->delete('/admin/skus/{id}',   fn($p) => (new SkuController($db))->delete($p));
+
+// Usuários / Administradores
+$router->get('/admin/users',            fn() => (new UserController($db))->index());
+$router->post('/admin/users/{id}/role', fn($p) => (new UserController($db))->updateRole($p));
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

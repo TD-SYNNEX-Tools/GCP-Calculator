@@ -20,6 +20,25 @@ BEGIN
 END;
 GO
 
+-- ---------- Auditoria de privilégios (quem promoveu/removeu admin) ----------
+IF OBJECT_ID(N'dbo.admin_role_audit', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.admin_role_audit (
+        id             BIGINT IDENTITY(1,1) PRIMARY KEY,
+        actor_user_id  BIGINT NULL,
+        actor_email    NVARCHAR(255) NOT NULL,
+        target_user_id BIGINT NOT NULL,
+        target_email   NVARCHAR(255) NOT NULL,
+        action         NVARCHAR(10) NOT NULL
+                       CONSTRAINT ck_role_audit_action CHECK (action IN ('grant','revoke')),
+        ip_address     NVARCHAR(64) NULL,
+        created_at     DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+    );
+    CREATE INDEX idx_role_audit_created ON dbo.admin_role_audit (created_at DESC);
+    CREATE INDEX idx_role_audit_target  ON dbo.admin_role_audit (target_user_id);
+END;
+GO
+
 -- ---------- SKUs / Preços ----------
 IF OBJECT_ID(N'dbo.skus', N'U') IS NULL
 BEGIN

@@ -101,13 +101,21 @@ final class AuthController extends BaseController
             $userModel = new User($this->db);
             $userId    = $userModel->upsertFromAzure($profile['oid'], $profile['email'], $profile['name']);
 
+            // Bootstrap de administradores: e-mails listados em APP_ADMIN_EMAILS
+            // são promovidos automaticamente no banco, que passa a ser a fonte de
+            // verdade dos privilégios. Novos admins são atribuídos pelo painel.
+            if ($this->isAdminEmail($profile['email']) && $userModel->getRole($userId) !== 'admin') {
+                $userModel->setRole($userId, 'admin');
+            }
+            $isAdmin = $userModel->getRole($userId) === 'admin';
+
             // Renova o ID da sessão após autenticação para prevenir fixação (CWE-384).
             Session::regenerate();
             Session::set('user', [
                 'id'       => $userId,
                 'name'     => $profile['name'],
                 'email'    => $profile['email'],
-                'is_admin' => $this->isAdminEmail($profile['email']),
+                'is_admin' => $isAdmin,
             ]);
 
             $this->redirect('/proposals/create');
@@ -120,6 +128,10 @@ final class AuthController extends BaseController
 
     public function logout(): void
     {
+        // Logout altera estado (encerra a sessão): exige token CSRF válido
+        // e só é aceito via POST, mitigando logout forçado (CWE-352).
+        $this->requireCsrf();
+
         // Determina se a sessão atual é do login de desenvolvimento.
         $user  = Session::get('user');
         $isDev = is_array($user) && (($user['email'] ?? '') === 'dev@localhost');

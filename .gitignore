@@ -1,6 +1,7 @@
 /vendor/
 /node_modules/
 /.env
+/.env.exemple
 /.idea/
 /.vscode/
 composer.lock

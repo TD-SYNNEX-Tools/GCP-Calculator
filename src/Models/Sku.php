@@ -9,6 +9,9 @@ final class Sku
 {
     public function __construct(private readonly PDO $db) {}
 
+    /** @var array<int, array|null> cache por requisicao para evitar buscas repetidas */
+    private array $findCache = [];
+
     public function all(bool $onlyActive = false): array
     {
         $sql = 'SELECT * FROM skus' . ($onlyActive ? ' WHERE active = 1' : '') . ' ORDER BY price_usd_tb_year ASC';
@@ -17,10 +20,13 @@ final class Sku
 
     public function find(int $id): ?array
     {
+        if (array_key_exists($id, $this->findCache)) {
+            return $this->findCache[$id];
+        }
         $stmt = $this->db->prepare('SELECT TOP 1 * FROM skus WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
-        return $row ?: null;
+        return $this->findCache[$id] = ($row ?: null);
     }
 
     public function findByName(string $name): ?array
