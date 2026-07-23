@@ -1,0 +1,24 @@
+# Reduz o contexto de build e evita copiar segredos/artefatos para a imagem.
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Segredos e configs locais — nunca vão para a imagem.
+.env
+.env.*
+!.env.example
+
+# vendor é reconstruído no estágio de build (Composer).
+vendor
+
+# Artefatos e documentação.
+*.log
+*.bak
+*.tmp
+README.md
+architecture.drawio
+
+# Certificados locais (não usados no container).
+certs

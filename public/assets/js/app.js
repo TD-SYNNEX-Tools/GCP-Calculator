@@ -39,6 +39,41 @@ function toast(message, type = 'success', timeout = 3200) {
     });
 })();
 
+// ---------- Navegação mobile (drawer lateral) ----------
+(function initMobileNav() {
+    const toggle   = document.getElementById('mobile-nav-toggle');
+    const sidebar  = document.getElementById('sidebar');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    if (!toggle || !sidebar || !backdrop) return;
+
+    const open = () => {
+        sidebar.classList.add('is-open');
+        backdrop.hidden = false;
+        // Força reflow para permitir a transição de opacidade do backdrop.
+        void backdrop.offsetWidth;
+        backdrop.classList.add('is-open');
+        document.body.classList.add('nav-open');
+        toggle.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+        sidebar.classList.remove('is-open');
+        backdrop.classList.remove('is-open');
+        document.body.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        setTimeout(() => { if (!sidebar.classList.contains('is-open')) backdrop.hidden = true; }, 250);
+    };
+    const isOpen = () => sidebar.classList.contains('is-open');
+
+    toggle.addEventListener('click', () => (isOpen() ? close() : open()));
+    backdrop.addEventListener('click', close);
+    // Fecha ao navegar por um link do menu.
+    sidebar.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    // Fecha com Esc.
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) close(); });
+    // Fecha automaticamente ao voltar para o desktop.
+    window.matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) close(); });
+})();
+
 // ---------- Toggle switch (label dinâmica) ----------
 document.querySelectorAll('.switch input[type="checkbox"]').forEach((cb) => {
     const label = cb.parentElement.querySelector('.switch-label');

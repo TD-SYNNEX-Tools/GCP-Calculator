@@ -22,7 +22,17 @@ $successFlash = Session::flash('success');
 <body>
 <div class="app-shell">
     <?php if ($user): ?>
-    <aside class="sidebar" aria-label="Navegação principal">
+    <header class="mobile-topbar">
+        <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"
+                aria-label="Abrir menu de navegação" aria-controls="sidebar" aria-expanded="false">
+            <span class="hamburger" aria-hidden="true"></span>
+        </button>
+        <a href="/proposals/create" class="mobile-brand" aria-label="Google SecOps Calculator">
+            <img src="/assets/img/logo.png" alt="Google SecOps Calculator" class="mobile-brand-logo">
+        </a>
+    </header>
+    <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
         <a href="/proposals/create" class="brand" aria-label="Google SecOps Calculator">
             <img src="/assets/img/logo.png" alt="Google SecOps Calculator" class="brand-logo">
         </a>

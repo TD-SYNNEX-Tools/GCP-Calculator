@@ -6,13 +6,21 @@ namespace App\Controllers;
 use App\Core\Session;
 use App\Models\User;
 use App\Services\AzureAuthService;
+use Closure;
 use PDO;
 use Throwable;
 
 final class AuthController extends BaseController
 {
+    /**
+     * @param Closure(): PDO $db Provedor preguiçoso de conexão. A conexão só
+     *   é aberta quando realmente necessária (callback/devLogin), mantendo a
+     *   tela de login (showLogin) e o início do SSO (login) independentes do
+     *   banco — o que evita erro 500 na página de login durante cold starts
+     *   ou indisponibilidade transitória do BD.
+     */
     public function __construct(
-        private readonly PDO $db,
+        private readonly Closure $db,
         private readonly array $azureConfig,
         private readonly bool $authBypass = false,
         private readonly array $adminEmails = [],
@@ -98,7 +106,7 @@ final class AuthController extends BaseController
                 }
             }
 
-            $userModel = new User($this->db);
+            $userModel = new User(($this->db)());
             $userId    = $userModel->upsertFromAzure($profile['oid'], $profile['email'], $profile['name']);
 
             // Bootstrap de administradores: e-mails listados em APP_ADMIN_EMAILS
@@ -170,7 +178,7 @@ final class AuthController extends BaseController
             return;
         }
 
-        $userModel = new User($this->db);
+        $userModel = new User(($this->db)());
         $userId    = $userModel->upsertFromAzure(
             oid:   'dev-local-user',
             email: 'dev@localhost',
