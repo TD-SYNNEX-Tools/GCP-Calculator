@@ -4,6 +4,7 @@
    ============================================================ */
 
 :root {
+    color-scheme: light;
     --blue-50:  #EAF1FA;
     --blue-100: #D3E1F2;
     --blue-500: #1D4E89;
@@ -363,7 +364,7 @@ body:has(.login-shell) .app-shell {
 .data-table input[type="number"] {
     padding: 6px 8px; border: 1px solid var(--gray-200);
     border-radius: 4px; font: inherit; width: 100%;
-    background: transparent;
+    background: transparent; color: var(--gray-900);
 }
 .data-table input:focus {
     background: #fff; border-color: var(--blue-500);
